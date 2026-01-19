@@ -68,10 +68,11 @@ type BatchCreateOrdersResponse struct {
 
 // BatchCancelOrdersIndividualResponse represents individual response in batch order cancellation
 type BatchCancelOrdersIndividualResponse struct {
-	OrderID   string         `json:"order_id"`
-	Order     *Order         `json:"order,omitempty"`
-	ReducedBy int            `json:"reduced_by"`
-	Error     *ErrorResponse `json:"error,omitempty"`
+	OrderID     string          `json:"order_id"`
+	Order       *Order          `json:"order,omitempty"`
+	ReducedBy   int             `json:"reduced_by"`
+	ReducedByFp FixedPointCount `json:"reduced_by_fp"`
+	Error       *ErrorResponse  `json:"error,omitempty"`
 }
 
 // BatchCancelOrdersResponse represents the response for batch order cancellation
@@ -81,8 +82,9 @@ type BatchCancelOrdersResponse struct {
 
 // CancelOrderResponse represents the response for canceling an order
 type CancelOrderResponse struct {
-	Order     Order `json:"order"`
-	ReducedBy int   `json:"reduced_by"`
+	Order       Order           `json:"order"`
+	ReducedBy   int             `json:"reduced_by"`
+	ReducedByFp FixedPointCount `json:"reduced_by_fp"`
 }
 
 // AmendOrderResponse represents the response for amending an order
@@ -172,7 +174,8 @@ type GetMarketResponse struct {
 
 // GetMarketOrderbookResponse represents the response for getting market orderbook
 type GetMarketOrderbookResponse struct {
-	Orderbook Orderbook `json:"orderbook"`
+	Orderbook   Orderbook        `json:"orderbook"`
+	OrderbookFp OrderbookCountFp `json:"orderbook_fp"`
 }
 
 // GetMarketCandlesticksResponse represents the response for getting market candlesticks
@@ -342,11 +345,33 @@ type LookupTickersInMveCollectionResponse struct {
 
 // CreateMarketInMveCollectionResponse represents the response for creating market in MVE collection
 type CreateMarketInMveCollectionResponse struct {
-	EventTicker  string `json:"event_ticker"`
-	MarketTicker string `json:"market_ticker"`
+	EventTicker  string  `json:"event_ticker"`
+	MarketTicker string  `json:"market_ticker"`
+	Market       *Market `json:"market,omitempty"`
 }
 
 // GetMveLookupHistoryResponse represents the response for MVE lookup history
 type GetMveLookupHistoryResponse struct {
 	LookupPoints []LookupPoint `json:"lookup_points"`
+}
+
+// CreateSubaccountResponse represents the response for creating a subaccount
+type CreateSubaccountResponse struct {
+	SubaccountNumber int `json:"subaccount_number"`
+}
+
+// ApplySubaccountTransferResponse represents the response for transferring between subaccounts
+type ApplySubaccountTransferResponse struct {
+	// Empty response indicating successful transfer
+}
+
+// GetSubaccountBalancesResponse represents the response for getting subaccount balances
+type GetSubaccountBalancesResponse struct {
+	SubaccountBalances []SubaccountBalance `json:"subaccount_balances"`
+}
+
+// GetSubaccountTransfersResponse represents the response for getting subaccount transfers
+type GetSubaccountTransfersResponse struct {
+	Transfers []SubaccountTransfer `json:"transfers"`
+	Cursor    *string              `json:"cursor,omitempty"`
 }
