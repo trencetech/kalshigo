@@ -2,8 +2,11 @@ package kalshigo
 
 import "time"
 
-// FixedPointDollars represents a US dollar amount as a fixed-point decimal string
+// FixedPointDollars represents a US dollar amount as a fixed-point decimal string with exactly 4 decimal places
 type FixedPointDollars string
+
+// FixedPointCount represents a fixed-point contract count string (2 decimals, e.g., "10.00")
+type FixedPointCount string
 
 // ErrorResponse represents an API error
 type ErrorResponse struct {
@@ -269,8 +272,11 @@ type Order struct {
 	YesPriceDollars         FixedPointDollars        `json:"yes_price_dollars"`
 	NoPriceDollars          FixedPointDollars        `json:"no_price_dollars"`
 	FillCount               int                      `json:"fill_count"`
+	FillCountFp             FixedPointCount          `json:"fill_count_fp"`
 	RemainingCount          int                      `json:"remaining_count"`
+	RemainingCountFp        FixedPointCount          `json:"remaining_count_fp"`
 	InitialCount            int                      `json:"initial_count"`
+	InitialCountFp          FixedPointCount          `json:"initial_count_fp"`
 	TakerFees               int                      `json:"taker_fees"`
 	MakerFees               int                      `json:"maker_fees"`
 	TakerFillCost           int                      `json:"taker_fill_cost"`
@@ -300,6 +306,7 @@ type Trade struct {
 	Ticker          string            `json:"ticker"`
 	Price           float64           `json:"price"`
 	Count           int               `json:"count"`
+	CountFp         FixedPointCount   `json:"count_fp"`
 	YesPrice        int               `json:"yes_price"`
 	NoPrice         int               `json:"no_price"`
 	YesPriceDollars FixedPointDollars `json:"yes_price_dollars"`
@@ -310,23 +317,24 @@ type Trade struct {
 
 // Fill represents a fill (matched trade)
 type Fill struct {
-	FillID        string      `json:"fill_id"`
-	TradeID       string      `json:"trade_id"`
-	OrderID       string      `json:"order_id"`
-	ClientOrderID string      `json:"client_order_id,omitempty"`
-	Ticker        string      `json:"ticker"`
-	MarketTicker  string      `json:"market_ticker"`
-	Side          OrderSide   `json:"side"`
-	Action        OrderAction `json:"action"`
-	Count         int         `json:"count"`
-	Price         float64     `json:"price"`
-	YesPrice      int         `json:"yes_price"`
-	NoPrice       int         `json:"no_price"`
-	YesPriceFixed string      `json:"yes_price_fixed"`
-	NoPriceFixed  string      `json:"no_price_fixed"`
-	IsTaker       bool        `json:"is_taker"`
-	CreatedTime   *time.Time  `json:"created_time,omitempty"`
-	Ts            int64       `json:"ts,omitempty"`
+	FillID        string          `json:"fill_id"`
+	TradeID       string          `json:"trade_id"`
+	OrderID       string          `json:"order_id"`
+	ClientOrderID *string         `json:"client_order_id,omitempty"`
+	Ticker        string          `json:"ticker"`
+	MarketTicker  string          `json:"market_ticker"`
+	Side          OrderSide       `json:"side"`
+	Action        OrderAction     `json:"action"`
+	Count         int             `json:"count"`
+	CountFp       FixedPointCount `json:"count_fp"`
+	Price         float64         `json:"price"`
+	YesPrice      int             `json:"yes_price"`
+	NoPrice       int             `json:"no_price"`
+	YesPriceFixed string          `json:"yes_price_fixed"`
+	NoPriceFixed  string          `json:"no_price_fixed"`
+	IsTaker       bool            `json:"is_taker"`
+	CreatedTime   *time.Time      `json:"created_time,omitempty"`
+	Ts            *int64          `json:"ts,omitempty"`
 }
 
 // MarketPosition represents a user's position in a market
@@ -335,6 +343,7 @@ type MarketPosition struct {
 	TotalTraded           int               `json:"total_traded"`
 	TotalTradedDollars    FixedPointDollars `json:"total_traded_dollars"`
 	Position              int               `json:"position"`
+	PositionFp            FixedPointCount   `json:"position_fp"`
 	MarketExposure        int               `json:"market_exposure"`
 	MarketExposureDollars FixedPointDollars `json:"market_exposure_dollars"`
 	RealizedPnl           int               `json:"realized_pnl"`
@@ -351,6 +360,7 @@ type EventPosition struct {
 	TotalCost            int               `json:"total_cost"`
 	TotalCostDollars     FixedPointDollars `json:"total_cost_dollars"`
 	TotalCostShares      int64             `json:"total_cost_shares"`
+	TotalCostSharesFp    FixedPointCount   `json:"total_cost_shares_fp"`
 	EventExposure        int               `json:"event_exposure"`
 	EventExposureDollars FixedPointDollars `json:"event_exposure_dollars"`
 	RealizedPnl          int               `json:"realized_pnl"`
@@ -365,8 +375,10 @@ type Settlement struct {
 	EventTicker  string           `json:"event_ticker"`
 	MarketResult SettlementResult `json:"market_result"`
 	YesCount     int64            `json:"yes_count"`
+	YesCountFp   FixedPointCount  `json:"yes_count_fp"`
 	YesTotalCost int              `json:"yes_total_cost"`
 	NoCount      int64            `json:"no_count"`
+	NoCountFp    FixedPointCount  `json:"no_count_fp"`
 	NoTotalCost  int              `json:"no_total_cost"`
 	Revenue      int              `json:"revenue"`
 	SettledTime  time.Time        `json:"settled_time"`
@@ -408,12 +420,14 @@ type PriceDistribution struct {
 
 // MarketCandlestick represents candlestick data for a market
 type MarketCandlestick struct {
-	EndPeriodTs  int64              `json:"end_period_ts"`
-	YesBid       BidAskDistribution `json:"yes_bid"`
-	YesAsk       BidAskDistribution `json:"yes_ask"`
-	Price        PriceDistribution  `json:"price"`
-	Volume       int64              `json:"volume"`
-	OpenInterest int64              `json:"open_interest"`
+	EndPeriodTs    int64              `json:"end_period_ts"`
+	YesBid         BidAskDistribution `json:"yes_bid"`
+	YesAsk         BidAskDistribution `json:"yes_ask"`
+	Price          PriceDistribution  `json:"price"`
+	Volume         int64              `json:"volume"`
+	VolumeFp       FixedPointCount    `json:"volume_fp"`
+	OpenInterest   int64              `json:"open_interest"`
+	OpenInterestFp FixedPointCount    `json:"open_interest_fp"`
 }
 
 // PriceLevel represents a price level in the order book
@@ -422,12 +436,21 @@ type PriceLevel [2]int
 // PriceLevelDollars represents a price level in dollars
 type PriceLevelDollars [2]any
 
-// Orderbook represents the order book
+// Orderbook represents the order book (legacy, prefer OrderbookCountFp)
 type Orderbook struct {
 	Yes        []PriceLevel        `json:"yes"`
 	No         []PriceLevel        `json:"no"`
 	YesDollars []PriceLevelDollars `json:"yes_dollars"`
 	NoDollars  []PriceLevelDollars `json:"no_dollars"`
+}
+
+// PriceLevelDollarsCountFp represents a price level with fixed-point contract count [dollars_string, fp_count_string]
+type PriceLevelDollarsCountFp [2]string
+
+// OrderbookCountFp represents the order book with fixed-point contract counts
+type OrderbookCountFp struct {
+	YesDollars []PriceLevelDollarsCountFp `json:"yes_dollars"`
+	NoDollars  []PriceLevelDollarsCountFp `json:"no_dollars"`
 }
 
 // PriceRange represents a valid price range for orders
@@ -439,9 +462,10 @@ type PriceRange struct {
 
 // MveSelectedLeg represents a selected leg for MVE
 type MveSelectedLeg struct {
-	EventTicker  string `json:"event_ticker,omitempty"`
-	MarketTicker string `json:"market_ticker,omitempty"`
-	Side         string `json:"side,omitempty"`
+	EventTicker               *string            `json:"event_ticker,omitempty"`
+	MarketTicker              *string            `json:"market_ticker,omitempty"`
+	Side                      *string            `json:"side,omitempty"`
+	YesSettlementValueDollars *FixedPointDollars `json:"yes_settlement_value_dollars,omitempty"`
 }
 
 // Market represents a market
@@ -473,10 +497,13 @@ type Market struct {
 	LastPrice               float64            `json:"last_price"`
 	LastPriceDollars        FixedPointDollars  `json:"last_price_dollars"`
 	Volume                  int                `json:"volume"`
+	VolumeFp                FixedPointCount    `json:"volume_fp"`
 	Volume24h               int                `json:"volume_24h"`
+	Volume24hFp             FixedPointCount    `json:"volume_24h_fp"`
 	Result                  MarketResult       `json:"result,omitempty"`
 	CanCloseEarly           bool               `json:"can_close_early"`
 	OpenInterest            int                `json:"open_interest"`
+	OpenInterestFp          FixedPointCount    `json:"open_interest_fp"`
 	NotionalValue           int                `json:"notional_value"`
 	NotionalValueDollars    FixedPointDollars  `json:"notional_value_dollars"`
 	PreviousYesBid          int                `json:"previous_yes_bid"`
@@ -491,23 +518,22 @@ type Market struct {
 	SettlementValueDollars  *FixedPointDollars `json:"settlement_value_dollars,omitempty"`
 	SettlementTs            *time.Time         `json:"settlement_ts,omitempty"`
 	ExpirationValue         string             `json:"expiration_value"`
-	Category                string             `json:"category"`
-	RiskLimitCents          int                `json:"risk_limit_cents"`
 	FeeWaiverExpirationTime *time.Time         `json:"fee_waiver_expiration_time,omitempty"`
 	EarlyCloseCondition     *string            `json:"early_close_condition,omitempty"`
 	TickSize                int                `json:"tick_size"`
-	StrikeType              StrikeType         `json:"strike_type,omitempty"`
+	StrikeType              *StrikeType        `json:"strike_type,omitempty"`
 	FloorStrike             *float64           `json:"floor_strike,omitempty"`
 	CapStrike               *float64           `json:"cap_strike,omitempty"`
 	FunctionalStrike        *string            `json:"functional_strike,omitempty"`
 	CustomStrike            map[string]any     `json:"custom_strike,omitempty"`
 	RulesPrimary            string             `json:"rules_primary"`
 	RulesSecondary          string             `json:"rules_secondary"`
-	MveCollectionTicker     string             `json:"mve_collection_ticker,omitempty"`
+	MveCollectionTicker     *string            `json:"mve_collection_ticker,omitempty"`
 	MveSelectedLegs         []MveSelectedLeg   `json:"mve_selected_legs,omitempty"`
 	PrimaryParticipantKey   *string            `json:"primary_participant_key,omitempty"`
 	PriceLevelStructure     string             `json:"price_level_structure"`
 	PriceRanges             []PriceRange       `json:"price_ranges"`
+	IsProvisional           *bool              `json:"is_provisional,omitempty"`
 }
 
 // SettlementSource represents a settlement source
@@ -530,6 +556,8 @@ type Series struct {
 	FeeType                FeeType            `json:"fee_type"`
 	FeeMultiplier          float64            `json:"fee_multiplier"`
 	AdditionalProhibitions []string           `json:"additional_prohibitions"`
+	Volume                 *int               `json:"volume,omitempty"`
+	VolumeFp               *FixedPointCount   `json:"volume_fp,omitempty"`
 }
 
 // SeriesFeeChange represents a fee change for a series
@@ -589,15 +617,16 @@ type LiveData struct {
 
 // IncentiveProgram represents an incentive program
 type IncentiveProgram struct {
-	ID                string        `json:"id"`
-	MarketTicker      string        `json:"market_ticker"`
-	IncentiveType     IncentiveType `json:"incentive_type"`
-	StartDate         time.Time     `json:"start_date"`
-	EndDate           time.Time     `json:"end_date"`
-	PeriodReward      int64         `json:"period_reward"`
-	PaidOut           bool          `json:"paid_out"`
-	DiscountFactorBps *int          `json:"discount_factor_bps,omitempty"`
-	TargetSize        *int          `json:"target_size,omitempty"`
+	ID                string           `json:"id"`
+	MarketTicker      string           `json:"market_ticker"`
+	IncentiveType     IncentiveType    `json:"incentive_type"`
+	StartDate         time.Time        `json:"start_date"`
+	EndDate           time.Time        `json:"end_date"`
+	PeriodReward      int64            `json:"period_reward"`
+	PaidOut           bool             `json:"paid_out"`
+	DiscountFactorBps *int             `json:"discount_factor_bps,omitempty"`
+	TargetSize        *int             `json:"target_size,omitempty"`
+	TargetSizeFp      *FixedPointCount `json:"target_size_fp,omitempty"`
 }
 
 // StructuredTarget represents a structured target
@@ -616,14 +645,15 @@ type RFQ struct {
 	CreatorID            string           `json:"creator_id"`
 	MarketTicker         string           `json:"market_ticker"`
 	Contracts            int              `json:"contracts"`
-	TargetCostCentiCents int64            `json:"target_cost_centi_cents,omitempty"`
+	ContractsFp          FixedPointCount  `json:"contracts_fp"`
+	TargetCostCentiCents *int64           `json:"target_cost_centi_cents,omitempty"`
 	Status               RFQStatus        `json:"status"`
 	CreatedTs            time.Time        `json:"created_ts"`
-	MveCollectionTicker  string           `json:"mve_collection_ticker,omitempty"`
+	MveCollectionTicker  *string          `json:"mve_collection_ticker,omitempty"`
 	MveSelectedLegs      []MveSelectedLeg `json:"mve_selected_legs,omitempty"`
-	RestRemainder        bool             `json:"rest_remainder,omitempty"`
-	CancellationReason   string           `json:"cancellation_reason,omitempty"`
-	CreatorUserID        string           `json:"creator_user_id,omitempty"`
+	RestRemainder        *bool            `json:"rest_remainder,omitempty"`
+	CancellationReason   *string          `json:"cancellation_reason,omitempty"`
+	CreatorUserID        *string          `json:"creator_user_id,omitempty"`
 	CancelledTs          *time.Time       `json:"cancelled_ts,omitempty"`
 	UpdatedTs            *time.Time       `json:"updated_ts,omitempty"`
 }
@@ -633,9 +663,10 @@ type Quote struct {
 	ID                      string            `json:"id"`
 	RfqID                   string            `json:"rfq_id"`
 	CreatorID               string            `json:"creator_id"`
-	RfqCreatorID            string            `json:"rfq_creator_id,omitempty"`
+	RfqCreatorID            *string           `json:"rfq_creator_id,omitempty"`
 	MarketTicker            string            `json:"market_ticker"`
 	Contracts               int               `json:"contracts"`
+	ContractsFp             FixedPointCount   `json:"contracts_fp"`
 	YesBid                  int               `json:"yes_bid"`
 	NoBid                   int               `json:"no_bid"`
 	YesBidDollars           FixedPointDollars `json:"yes_bid_dollars"`
@@ -643,18 +674,18 @@ type Quote struct {
 	CreatedTs               time.Time         `json:"created_ts"`
 	UpdatedTs               time.Time         `json:"updated_ts"`
 	Status                  QuoteStatus       `json:"status"`
-	AcceptedSide            OrderSide         `json:"accepted_side,omitempty"`
+	AcceptedSide            *OrderSide        `json:"accepted_side,omitempty"`
 	AcceptedTs              *time.Time        `json:"accepted_ts,omitempty"`
 	ConfirmedTs             *time.Time        `json:"confirmed_ts,omitempty"`
 	ExecutedTs              *time.Time        `json:"executed_ts,omitempty"`
 	CancelledTs             *time.Time        `json:"cancelled_ts,omitempty"`
-	RestRemainder           bool              `json:"rest_remainder,omitempty"`
-	CancellationReason      string            `json:"cancellation_reason,omitempty"`
-	CreatorUserID           string            `json:"creator_user_id,omitempty"`
-	RfqCreatorUserID        string            `json:"rfq_creator_user_id,omitempty"`
-	RfqTargetCostCentiCents int64             `json:"rfq_target_cost_centi_cents,omitempty"`
-	RfqCreatorOrderID       string            `json:"rfq_creator_order_id,omitempty"`
-	CreatorOrderID          string            `json:"creator_order_id,omitempty"`
+	RestRemainder           *bool             `json:"rest_remainder,omitempty"`
+	CancellationReason      *string           `json:"cancellation_reason,omitempty"`
+	CreatorUserID           *string           `json:"creator_user_id,omitempty"`
+	RfqCreatorUserID        *string           `json:"rfq_creator_user_id,omitempty"`
+	RfqTargetCostCentiCents *int64            `json:"rfq_target_cost_centi_cents,omitempty"`
+	RfqCreatorOrderID       *string           `json:"rfq_creator_order_id,omitempty"`
+	CreatorOrderID          *string           `json:"creator_order_id,omitempty"`
 }
 
 // OrderQueuePosition represents the queue position of an order
@@ -737,4 +768,20 @@ type ForecastPercentilesPoint struct {
 type MarketCandlesticksResponse struct {
 	MarketTicker string              `json:"market_ticker"`
 	Candlesticks []MarketCandlestick `json:"candlesticks"`
+}
+
+// SubaccountBalance represents a subaccount balance
+type SubaccountBalance struct {
+	SubaccountNumber int   `json:"subaccount_number"`
+	Balance          int64 `json:"balance"`
+	UpdatedTs        int64 `json:"updated_ts"`
+}
+
+// SubaccountTransfer represents a transfer between subaccounts
+type SubaccountTransfer struct {
+	TransferID     string `json:"transfer_id"`
+	FromSubaccount int    `json:"from_subaccount"`
+	ToSubaccount   int    `json:"to_subaccount"`
+	Amount         int64  `json:"amount"`
+	CreatedTs      int64  `json:"created_ts"`
 }

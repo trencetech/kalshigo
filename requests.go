@@ -2,25 +2,27 @@ package kalshigo
 
 // CreateOrderRequest represents a request to create an order
 type CreateOrderRequest struct {
-	Ticker                  string                  `json:"ticker"`
-	ClientOrderID           string                  `json:"client_order_id,omitempty"`
-	Side                    OrderSide               `json:"side"`
-	Action                  OrderAction             `json:"action"`
-	Count                   int                     `json:"count"`
-	Type                    OrderType               `json:"type,omitempty"`
-	YesPrice                int                     `json:"yes_price,omitempty"`
-	NoPrice                 int                     `json:"no_price,omitempty"`
-	YesPriceDollars         FixedPointDollars       `json:"yes_price_dollars,omitempty"`
-	NoPriceDollars          FixedPointDollars       `json:"no_price_dollars,omitempty"`
-	ExpirationTs            int64                   `json:"expiration_ts,omitempty"`
-	TimeInForce             TimeInForce             `json:"time_in_force,omitempty"`
-	BuyMaxCost              int                     `json:"buy_max_cost,omitempty"`
-	PostOnly                bool                    `json:"post_only,omitempty"`
-	ReduceOnly              bool                    `json:"reduce_only,omitempty"`
-	SellPositionFloor       int                     `json:"sell_position_floor,omitempty"`
-	SelfTradePreventionType SelfTradePreventionType `json:"self_trade_prevention_type,omitempty"`
-	OrderGroupID            string                  `json:"order_group_id,omitempty"`
-	CancelOrderOnPause      bool                    `json:"cancel_order_on_pause,omitempty"`
+	Ticker                  string                   `json:"ticker"`
+	ClientOrderID           *string                  `json:"client_order_id,omitempty"`
+	Side                    OrderSide                `json:"side"`
+	Action                  OrderAction              `json:"action"`
+	Count                   *int                     `json:"count,omitempty"`
+	CountFp                 *FixedPointCount         `json:"count_fp,omitempty"`
+	Type                    *OrderType               `json:"type,omitempty"`
+	YesPrice                *int                     `json:"yes_price,omitempty"`
+	NoPrice                 *int                     `json:"no_price,omitempty"`
+	YesPriceDollars         *FixedPointDollars       `json:"yes_price_dollars,omitempty"`
+	NoPriceDollars          *FixedPointDollars       `json:"no_price_dollars,omitempty"`
+	ExpirationTs            *int64                   `json:"expiration_ts,omitempty"`
+	TimeInForce             *TimeInForce             `json:"time_in_force,omitempty"`
+	BuyMaxCost              *int                     `json:"buy_max_cost,omitempty"`
+	PostOnly                *bool                    `json:"post_only,omitempty"`
+	ReduceOnly              *bool                    `json:"reduce_only,omitempty"`
+	SellPositionFloor       *int                     `json:"sell_position_floor,omitempty"`
+	SelfTradePreventionType *SelfTradePreventionType `json:"self_trade_prevention_type,omitempty"`
+	OrderGroupID            *string                  `json:"order_group_id,omitempty"`
+	CancelOrderOnPause      *bool                    `json:"cancel_order_on_pause,omitempty"`
+	Subaccount              *int                     `json:"subaccount,omitempty"`
 }
 
 // BatchCreateOrdersRequest represents a batch order creation request
@@ -35,27 +37,31 @@ type BatchCancelOrdersRequest struct {
 
 // AmendOrderRequest represents a request to amend an order
 type AmendOrderRequest struct {
-	Ticker               string            `json:"ticker"`
-	Side                 OrderSide         `json:"side"`
-	Action               OrderAction       `json:"action"`
-	ClientOrderID        string            `json:"client_order_id"`
-	UpdatedClientOrderID string            `json:"updated_client_order_id"`
-	YesPrice             int               `json:"yes_price,omitempty"`
-	NoPrice              int               `json:"no_price,omitempty"`
-	YesPriceDollars      FixedPointDollars `json:"yes_price_dollars,omitempty"`
-	NoPriceDollars       FixedPointDollars `json:"no_price_dollars,omitempty"`
-	Count                int               `json:"count,omitempty"`
+	Ticker               string             `json:"ticker"`
+	Side                 OrderSide          `json:"side"`
+	Action               OrderAction        `json:"action"`
+	ClientOrderID        string             `json:"client_order_id"`
+	UpdatedClientOrderID string             `json:"updated_client_order_id"`
+	YesPrice             *int               `json:"yes_price,omitempty"`
+	NoPrice              *int               `json:"no_price,omitempty"`
+	YesPriceDollars      *FixedPointDollars `json:"yes_price_dollars,omitempty"`
+	NoPriceDollars       *FixedPointDollars `json:"no_price_dollars,omitempty"`
+	Count                *int               `json:"count,omitempty"`
+	CountFp              *FixedPointCount   `json:"count_fp,omitempty"`
 }
 
 // DecreaseOrderRequest represents a request to decrease an order
 type DecreaseOrderRequest struct {
-	ReduceBy int `json:"reduce_by,omitempty"`
-	ReduceTo int `json:"reduce_to,omitempty"`
+	ReduceBy   *int             `json:"reduce_by,omitempty"`
+	ReduceByFp *FixedPointCount `json:"reduce_by_fp,omitempty"`
+	ReduceTo   *int             `json:"reduce_to,omitempty"`
+	ReduceToFp *FixedPointCount `json:"reduce_to_fp,omitempty"`
 }
 
 // CreateOrderGroupRequest represents a request to create an order group
 type CreateOrderGroupRequest struct {
-	ContractsLimit int64 `json:"contracts_limit"`
+	ContractsLimit   *int64           `json:"contracts_limit,omitempty"`
+	ContractsLimitFp *FixedPointCount `json:"contracts_limit_fp,omitempty"`
 }
 
 // CreateApiKeyRequest represents a request to create an API key
@@ -73,12 +79,13 @@ type GenerateApiKeyRequest struct {
 
 // CreateRFQRequest represents a request to create an RFQ
 type CreateRFQRequest struct {
-	MarketTicker         string `json:"market_ticker"`
-	Contracts            int    `json:"contracts,omitempty"`
-	TargetCostCentiCents int64  `json:"target_cost_centi_cents,omitempty"`
-	RestRemainder        bool   `json:"rest_remainder"`
-	ReplaceExisting      bool   `json:"replace_existing,omitempty"`
-	SubtraderID          string `json:"subtrader_id,omitempty"`
+	MarketTicker         string           `json:"market_ticker"`
+	Contracts            *int             `json:"contracts,omitempty"`
+	ContractsFp          *FixedPointCount `json:"contracts_fp,omitempty"`
+	TargetCostCentiCents *int64           `json:"target_cost_centi_cents,omitempty"`
+	RestRemainder        bool             `json:"rest_remainder"`
+	ReplaceExisting      *bool            `json:"replace_existing,omitempty"`
+	SubtraderID          *string          `json:"subtrader_id,omitempty"`
 }
 
 // CreateQuoteRequest represents a request to create a quote
@@ -96,7 +103,8 @@ type AcceptQuoteRequest struct {
 
 // CreateMarketInMveCollectionRequest represents a request to create a market in MVE collection
 type CreateMarketInMveCollectionRequest struct {
-	SelectedMarkets []TickerPair `json:"selected_markets"`
+	SelectedMarkets   []TickerPair `json:"selected_markets"`
+	WithMarketPayload *bool        `json:"with_market_payload,omitempty"`
 }
 
 // LookupTickersInMveCollectionRequest represents a request to lookup tickers in MVE collection
@@ -113,16 +121,18 @@ type GetOrdersParams struct {
 	Status      OrderStatus `url:"status,omitempty"`
 	Limit       int         `url:"limit,omitempty"`
 	Cursor      string      `url:"cursor,omitempty"`
+	Subaccount  *int        `url:"subaccount,omitempty"`
 }
 
 // GetFillsParams represents query parameters for getting fills
 type GetFillsParams struct {
-	Ticker  string `url:"ticker,omitempty"`
-	OrderID string `url:"order_id,omitempty"`
-	MinTs   int64  `url:"min_ts,omitempty"`
-	MaxTs   int64  `url:"max_ts,omitempty"`
-	Limit   int    `url:"limit,omitempty"`
-	Cursor  string `url:"cursor,omitempty"`
+	Ticker     string `url:"ticker,omitempty"`
+	OrderID    string `url:"order_id,omitempty"`
+	MinTs      int64  `url:"min_ts,omitempty"`
+	MaxTs      int64  `url:"max_ts,omitempty"`
+	Limit      int    `url:"limit,omitempty"`
+	Cursor     string `url:"cursor,omitempty"`
+	Subaccount *int   `url:"subaccount,omitempty"`
 }
 
 // GetPositionsParams represents query parameters for getting positions
@@ -132,6 +142,7 @@ type GetPositionsParams struct {
 	CountFilter string `url:"count_filter,omitempty"`
 	Ticker      string `url:"ticker,omitempty"`
 	EventTicker string `url:"event_ticker,omitempty"`
+	Subaccount  *int   `url:"subaccount,omitempty"`
 }
 
 // GetSettlementsParams represents query parameters for getting settlements
@@ -142,6 +153,7 @@ type GetSettlementsParams struct {
 	EventTicker string `url:"event_ticker,omitempty"`
 	MinTs       int64  `url:"min_ts,omitempty"`
 	MaxTs       int64  `url:"max_ts,omitempty"`
+	Subaccount  *int   `url:"subaccount,omitempty"`
 }
 
 // GetTradesParams represents query parameters for getting trades
@@ -319,4 +331,18 @@ type GetForecastHistoryParams struct {
 	StartTs        int64 `url:"start_ts"`
 	EndTs          int64 `url:"end_ts"`
 	PeriodInterval int   `url:"period_interval"`
+}
+
+// ApplySubaccountTransferRequest represents a request to transfer between subaccounts
+type ApplySubaccountTransferRequest struct {
+	ClientTransferID string `json:"client_transfer_id"`
+	FromSubaccount   int    `json:"from_subaccount"`
+	ToSubaccount     int    `json:"to_subaccount"`
+	AmountCents      int64  `json:"amount_cents"`
+}
+
+// GetSubaccountTransfersParams represents query parameters for getting subaccount transfers
+type GetSubaccountTransfersParams struct {
+	Limit  *int    `url:"limit,omitempty"`
+	Cursor *string `url:"cursor,omitempty"`
 }

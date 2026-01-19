@@ -51,3 +51,40 @@ func (c *Client) GetFills(ctx context.Context, params *GetFillsParams) (*GetFill
 	}
 	return &result, nil
 }
+
+// CreateSubaccount creates a new subaccount
+func (c *Client) CreateSubaccount(ctx context.Context) (*CreateSubaccountResponse, error) {
+	var result CreateSubaccountResponse
+	if err := c.post(ctx, "/portfolio/subaccounts", nil, &result, true); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// ApplySubaccountTransfer transfers funds between subaccounts
+func (c *Client) ApplySubaccountTransfer(ctx context.Context, req *ApplySubaccountTransferRequest) (*ApplySubaccountTransferResponse, error) {
+	var result ApplySubaccountTransferResponse
+	if err := c.post(ctx, "/portfolio/subaccounts/transfers", req, &result, true); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// GetSubaccountBalances retrieves balances for all subaccounts
+func (c *Client) GetSubaccountBalances(ctx context.Context) (*GetSubaccountBalancesResponse, error) {
+	var result GetSubaccountBalancesResponse
+	if err := c.get(ctx, "/portfolio/subaccounts/balances", nil, &result, true); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// GetSubaccountTransfers retrieves subaccount transfer history
+func (c *Client) GetSubaccountTransfers(ctx context.Context, params *GetSubaccountTransfersParams) (*GetSubaccountTransfersResponse, error) {
+	var result GetSubaccountTransfersResponse
+	query := buildQuery(params)
+	if err := c.get(ctx, "/portfolio/subaccounts/transfers", query, &result, true); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
