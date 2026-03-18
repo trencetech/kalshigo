@@ -147,3 +147,21 @@ func (c *Client) ResetOrderGroup(ctx context.Context, orderGroupID string) error
 	}
 	return nil
 }
+
+// TriggerOrderGroup triggers the order group, canceling all orders in the group.
+func (c *Client) TriggerOrderGroup(ctx context.Context, orderGroupID string) error {
+	path := fmt.Sprintf("/portfolio/order_groups/%s/trigger", orderGroupID)
+	if err := c.put(ctx, path, nil, nil, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+// UpdateOrderGroupLimit updates the order group's contracts limit.
+func (c *Client) UpdateOrderGroupLimit(ctx context.Context, orderGroupID string, req *UpdateOrderGroupLimitRequest) error {
+	path := fmt.Sprintf("/portfolio/order_groups/%s/limit", orderGroupID)
+	if err := c.put(ctx, path, req, nil, true); err != nil {
+		return err
+	}
+	return nil
+}

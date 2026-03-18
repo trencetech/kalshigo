@@ -32,7 +32,14 @@ type BatchCreateOrdersRequest struct {
 
 // BatchCancelOrdersRequest represents a batch order cancellation request
 type BatchCancelOrdersRequest struct {
-	IDs []string `json:"ids"`
+	IDs    []string                        `json:"ids,omitempty"`
+	Orders []BatchCancelOrdersRequestOrder `json:"orders,omitempty"`
+}
+
+// BatchCancelOrdersRequestOrder represents an individual order to cancel in a batch request
+type BatchCancelOrdersRequestOrder struct {
+	OrderID    string `json:"order_id"`
+	Subaccount *int   `json:"subaccount,omitempty"`
 }
 
 // AmendOrderRequest represents a request to amend an order
@@ -40,14 +47,15 @@ type AmendOrderRequest struct {
 	Ticker               string             `json:"ticker"`
 	Side                 OrderSide          `json:"side"`
 	Action               OrderAction        `json:"action"`
-	ClientOrderID        string             `json:"client_order_id"`
-	UpdatedClientOrderID string             `json:"updated_client_order_id"`
+	ClientOrderID        string             `json:"client_order_id,omitempty"`
+	UpdatedClientOrderID string             `json:"updated_client_order_id,omitempty"`
 	YesPrice             *int               `json:"yes_price,omitempty"`
 	NoPrice              *int               `json:"no_price,omitempty"`
 	YesPriceDollars      *FixedPointDollars `json:"yes_price_dollars,omitempty"`
 	NoPriceDollars       *FixedPointDollars `json:"no_price_dollars,omitempty"`
 	Count                *int               `json:"count,omitempty"`
 	CountFp              *FixedPointCount   `json:"count_fp,omitempty"`
+	Subaccount           *int               `json:"subaccount,omitempty"`
 }
 
 // DecreaseOrderRequest represents a request to decrease an order
@@ -56,12 +64,14 @@ type DecreaseOrderRequest struct {
 	ReduceByFp *FixedPointCount `json:"reduce_by_fp,omitempty"`
 	ReduceTo   *int             `json:"reduce_to,omitempty"`
 	ReduceToFp *FixedPointCount `json:"reduce_to_fp,omitempty"`
+	Subaccount *int             `json:"subaccount,omitempty"`
 }
 
 // CreateOrderGroupRequest represents a request to create an order group
 type CreateOrderGroupRequest struct {
 	ContractsLimit   *int64           `json:"contracts_limit,omitempty"`
 	ContractsLimitFp *FixedPointCount `json:"contracts_limit_fp,omitempty"`
+	Subaccount       *int             `json:"subaccount,omitempty"`
 }
 
 // CreateApiKeyRequest represents a request to create an API key
@@ -79,13 +89,15 @@ type GenerateApiKeyRequest struct {
 
 // CreateRFQRequest represents a request to create an RFQ
 type CreateRFQRequest struct {
-	MarketTicker         string           `json:"market_ticker"`
-	Contracts            *int             `json:"contracts,omitempty"`
-	ContractsFp          *FixedPointCount `json:"contracts_fp,omitempty"`
-	TargetCostCentiCents *int64           `json:"target_cost_centi_cents,omitempty"`
-	RestRemainder        bool             `json:"rest_remainder"`
-	ReplaceExisting      *bool            `json:"replace_existing,omitempty"`
-	SubtraderID          *string          `json:"subtrader_id,omitempty"`
+	MarketTicker         string             `json:"market_ticker"`
+	Contracts            *int               `json:"contracts,omitempty"`
+	ContractsFp          *FixedPointCount   `json:"contracts_fp,omitempty"`
+	TargetCostCentiCents *int64             `json:"target_cost_centi_cents,omitempty"`
+	TargetCostDollars    *FixedPointDollars `json:"target_cost_dollars,omitempty"`
+	RestRemainder        bool               `json:"rest_remainder"`
+	ReplaceExisting      *bool              `json:"replace_existing,omitempty"`
+	SubtraderID          *string            `json:"subtrader_id,omitempty"`
+	Subaccount           *int               `json:"subaccount,omitempty"`
 }
 
 // CreateQuoteRequest represents a request to create a quote
@@ -94,6 +106,7 @@ type CreateQuoteRequest struct {
 	YesBid        FixedPointDollars `json:"yes_bid"`
 	NoBid         FixedPointDollars `json:"no_bid"`
 	RestRemainder bool              `json:"rest_remainder"`
+	Subaccount    *int              `json:"subaccount,omitempty"`
 }
 
 // AcceptQuoteRequest represents a request to accept a quote
@@ -180,6 +193,7 @@ type GetMarketsParams struct {
 	Status       MarketStatus `url:"status,omitempty"`
 	Tickers      string       `url:"tickers,omitempty"`
 	MveFilter    string       `url:"mve_filter,omitempty"`
+	MinUpdatedTs *int64       `url:"min_updated_ts,omitempty"`
 }
 
 // GetEventsParams represents query parameters for getting events
@@ -191,6 +205,7 @@ type GetEventsParams struct {
 	Status            EventStatus `url:"status,omitempty"`
 	SeriesTicker      string      `url:"series_ticker,omitempty"`
 	MinCloseTs        int64       `url:"min_close_ts,omitempty"`
+	MinUpdatedTs      *int64      `url:"min_updated_ts,omitempty"`
 }
 
 // GetMultivariateEventsParams represents query parameters for getting multivariate events
@@ -204,9 +219,10 @@ type GetMultivariateEventsParams struct {
 
 // GetCandlesticksParams represents query parameters for getting candlesticks
 type GetCandlesticksParams struct {
-	StartTs        int64 `url:"start_ts"`
-	EndTs          int64 `url:"end_ts"`
-	PeriodInterval int   `url:"period_interval"`
+	StartTs                  int64 `url:"start_ts"`
+	EndTs                    int64 `url:"end_ts"`
+	PeriodInterval           int   `url:"period_interval"`
+	IncludeLatestBeforeStart bool  `url:"include_latest_before_start,omitempty"`
 }
 
 // BatchGetCandlesticksParams represents query parameters for batch getting candlesticks
@@ -229,6 +245,8 @@ type GetSeriesListParams struct {
 	Category               string `url:"category,omitempty"`
 	Tags                   string `url:"tags,omitempty"`
 	IncludeProductMetadata bool   `url:"include_product_metadata,omitempty"`
+	IncludeVolume          bool   `url:"include_volume,omitempty"`
+	MinUpdatedTs           *int64 `url:"min_updated_ts,omitempty"`
 }
 
 // GetMilestonesParams represents query parameters for getting milestones
@@ -241,6 +259,7 @@ type GetMilestonesParams struct {
 	Type               string `url:"type,omitempty"`
 	RelatedEventTicker string `url:"related_event_ticker,omitempty"`
 	Cursor             string `url:"cursor,omitempty"`
+	MinUpdatedTs       *int64 `url:"min_updated_ts,omitempty"`
 }
 
 // GetIncentiveProgramsParams represents query parameters for getting incentive programs
@@ -267,6 +286,7 @@ type GetRFQsParams struct {
 	Limit         int    `url:"limit,omitempty"`
 	Status        string `url:"status,omitempty"`
 	CreatorUserID string `url:"creator_user_id,omitempty"`
+	Subaccount    *int   `url:"subaccount,omitempty"`
 }
 
 // GetQuotesParams represents query parameters for getting quotes
@@ -286,6 +306,7 @@ type GetQuotesParams struct {
 type GetOrderQueuePositionsParams struct {
 	MarketTickers string `url:"market_tickers,omitempty"`
 	EventTicker   string `url:"event_ticker,omitempty"`
+	Subaccount    *int   `url:"subaccount,omitempty"`
 }
 
 // GetMveCollectionsParams represents query parameters for getting MVE collections
@@ -345,4 +366,67 @@ type ApplySubaccountTransferRequest struct {
 type GetSubaccountTransfersParams struct {
 	Limit  *int    `url:"limit,omitempty"`
 	Cursor *string `url:"cursor,omitempty"`
+}
+
+// GetSeriesParams represents query parameters for getting a single series
+type GetSeriesParams struct {
+	IncludeVolume bool `url:"include_volume,omitempty"`
+}
+
+// GetOrderGroupsParams represents query parameters for getting order groups
+type GetOrderGroupsParams struct {
+	Subaccount *int `url:"subaccount,omitempty"`
+}
+
+// UpdateOrderGroupLimitRequest represents a request to update an order group's contracts limit
+type UpdateOrderGroupLimitRequest struct {
+	ContractsLimit   *int             `json:"contracts_limit,omitempty"`
+	ContractsLimitFp *FixedPointCount `json:"contracts_limit_fp,omitempty"`
+}
+
+// UpdateSubaccountNettingRequest represents a request to update subaccount netting settings
+type UpdateSubaccountNettingRequest struct {
+	SubaccountNumber int  `json:"subaccount_number"`
+	Enabled          bool `json:"enabled"`
+}
+
+// GetHistoricalMarketsParams represents query parameters for getting historical markets
+type GetHistoricalMarketsParams struct {
+	Limit               *int   `url:"limit,omitempty"`
+	Cursor              string `url:"cursor,omitempty"`
+	Tickers             string `url:"tickers,omitempty"`
+	EventTicker         string `url:"event_ticker,omitempty"`
+	MveHistoricalFilter string `url:"mve_filter,omitempty"`
+}
+
+// GetHistoricalCandlesticksParams represents query parameters for getting historical candlesticks
+type GetHistoricalCandlesticksParams struct {
+	StartTs        int64 `url:"start_ts"`
+	EndTs          int64 `url:"end_ts"`
+	PeriodInterval int   `url:"period_interval"`
+}
+
+// GetHistoricalFillsParams represents query parameters for getting historical fills
+type GetHistoricalFillsParams struct {
+	Ticker string `url:"ticker,omitempty"`
+	MaxTs  *int64 `url:"max_ts,omitempty"`
+	Limit  *int   `url:"limit,omitempty"`
+	Cursor string `url:"cursor,omitempty"`
+}
+
+// GetHistoricalOrdersParams represents query parameters for getting historical orders
+type GetHistoricalOrdersParams struct {
+	Ticker string `url:"ticker,omitempty"`
+	MaxTs  *int64 `url:"max_ts,omitempty"`
+	Limit  *int   `url:"limit,omitempty"`
+	Cursor string `url:"cursor,omitempty"`
+}
+
+// GetHistoricalTradesParams represents query parameters for getting historical trades
+type GetHistoricalTradesParams struct {
+	Ticker string `url:"ticker,omitempty"`
+	MinTs  *int64 `url:"min_ts,omitempty"`
+	MaxTs  *int64 `url:"max_ts,omitempty"`
+	Limit  *int   `url:"limit,omitempty"`
+	Cursor string `url:"cursor,omitempty"`
 }

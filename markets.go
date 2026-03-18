@@ -75,10 +75,11 @@ func (c *Client) GetTrades(ctx context.Context, params *GetTradesParams) (*GetTr
 }
 
 // GetSeries retrieves a single series by ticker
-func (c *Client) GetSeries(ctx context.Context, seriesTicker string) (*GetSeriesResponse, error) {
+func (c *Client) GetSeries(ctx context.Context, seriesTicker string, params *GetSeriesParams) (*GetSeriesResponse, error) {
 	var result GetSeriesResponse
 	path := fmt.Sprintf("/series/%s", seriesTicker)
-	if err := c.get(ctx, path, nil, &result, false); err != nil {
+	query := buildQuery(params)
+	if err := c.get(ctx, path, query, &result, false); err != nil {
 		return nil, err
 	}
 	return &result, nil
