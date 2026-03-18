@@ -100,7 +100,7 @@ type DecreaseOrderResponse struct {
 
 // GetOrderQueuePositionResponse represents the response for getting order queue position
 type GetOrderQueuePositionResponse struct {
-	QueuePosition int `json:"queue_position"`
+	QueuePositionFp FixedPointCount `json:"queue_position_fp"`
 }
 
 // GetOrderQueuePositionsResponse represents the response for getting order queue positions
@@ -115,8 +115,9 @@ type GetOrderGroupsResponse struct {
 
 // GetOrderGroupResponse represents the response for getting a single order group
 type GetOrderGroupResponse struct {
-	IsAutoCancelEnabled bool     `json:"is_auto_cancel_enabled"`
-	Orders              []string `json:"orders,omitempty"`
+	IsAutoCancelEnabled bool            `json:"is_auto_cancel_enabled"`
+	Orders              []string        `json:"orders,omitempty"`
+	ContractsLimitFp    FixedPointCount `json:"contracts_limit_fp,omitempty"`
 }
 
 // CreateOrderGroupResponse represents the response for creating an order group
@@ -374,4 +375,29 @@ type GetSubaccountBalancesResponse struct {
 type GetSubaccountTransfersResponse struct {
 	Transfers []SubaccountTransfer `json:"transfers"`
 	Cursor    *string              `json:"cursor,omitempty"`
+}
+
+// GetHistoricalCutoffResponse represents the response for historical cutoff timestamps
+type GetHistoricalCutoffResponse struct {
+	MarketSettledTs time.Time `json:"market_settled_ts"`
+	TradesCreatedTs time.Time `json:"trades_created_ts"`
+	OrdersUpdatedTs time.Time `json:"orders_updated_ts"`
+}
+
+// GetMarketCandlesticksHistoricalResponse represents historical candlestick response
+type GetMarketCandlesticksHistoricalResponse struct {
+	Ticker       string                        `json:"ticker"`
+	Candlesticks []MarketCandlestickHistorical `json:"candlesticks"`
+}
+
+// GetAccountApiLimitsResponse represents the response for account API limits
+type GetAccountApiLimitsResponse struct {
+	UsageTier  string `json:"usage_tier"`
+	ReadLimit  int    `json:"read_limit"`
+	WriteLimit int    `json:"write_limit"`
+}
+
+// GetSubaccountNettingResponse represents the response for subaccount netting settings
+type GetSubaccountNettingResponse struct {
+	NettingConfigs []SubaccountNettingConfig `json:"netting_configs"`
 }

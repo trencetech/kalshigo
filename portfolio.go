@@ -88,3 +88,20 @@ func (c *Client) GetSubaccountTransfers(ctx context.Context, params *GetSubaccou
 	}
 	return &result, nil
 }
+
+// GetSubaccountNetting retrieves the netting settings for all subaccounts.
+func (c *Client) GetSubaccountNetting(ctx context.Context) (*GetSubaccountNettingResponse, error) {
+	var result GetSubaccountNettingResponse
+	if err := c.get(ctx, "/portfolio/subaccounts/netting", nil, &result, true); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// UpdateSubaccountNetting updates the netting setting for a specific subaccount.
+func (c *Client) UpdateSubaccountNetting(ctx context.Context, req *UpdateSubaccountNettingRequest) error {
+	if err := c.put(ctx, "/portfolio/subaccounts/netting", req, nil, true); err != nil {
+		return err
+	}
+	return nil
+}
