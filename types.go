@@ -106,8 +106,9 @@ const (
 type MarketResult string
 
 const (
-	MarketResultYes MarketResult = "yes"
-	MarketResultNo  MarketResult = "no"
+	MarketResultYes    MarketResult = "yes"
+	MarketResultNo     MarketResult = "no"
+	MarketResultScalar MarketResult = "scalar"
 )
 
 // EventStatus represents the status of an event
